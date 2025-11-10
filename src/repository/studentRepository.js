@@ -18,11 +18,15 @@ export const findStudent = (id) => {
 export const editStudent = ({id, name, password}) => {
     const currentStudent = findStudent(id);
     if (currentStudent) {
-        currentStudent.name = name;
-        currentStudent.password = password; //todo handle empty strings
-        return true;
+        if (name) {
+            currentStudent.name = name;
+        }
+        if (password) {
+            currentStudent.password = password;
+        }
+        return currentStudent;
     } else {
-        return false;
+        return null;
     }
 }
 

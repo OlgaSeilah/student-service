@@ -28,9 +28,9 @@ export const updateStudent = (req, res) => {
             name: req.body.name,
             password: req.body.password,
         }
-        const success = repo.editStudent(dataForUpdate);
-        if (success) {
-            res.status(200).json({message: 'student updated successfully'});
+        const changedStudent = repo.editStudent(dataForUpdate);
+        if (changedStudent) {
+            res.status(200).json({changedStudent});
         } else {
             res.status(400).json({message: 'incorrect request'});
         }
