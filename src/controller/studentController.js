@@ -16,7 +16,13 @@ export const findStudent = (req, res) => {
         const {password, ...studentWithoutPassword} = student;
         res.status(200).json(studentWithoutPassword);
     } else {
-        res.status(404).json({message: 'student not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
 
@@ -35,7 +41,13 @@ export const updateStudent = (req, res) => {
             res.status(400).json({message: 'incorrect request'});
         }
     } else {
-        res.status(404).json({message: 'student not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 
 }
@@ -45,7 +57,13 @@ export const deleteStudent = (req, res) => {
     if (success) {
         res.status(204).send();
     } else {
-        res.status(404).json({message: 'student not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
 
@@ -54,7 +72,13 @@ export const addScore = (req, res) => {
     if (success) {
         res.status(204).send();
     } else {
-        res.status(404).json({message: 'student not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
 
@@ -64,7 +88,13 @@ export const findByName = (req, res) => {
 
         res.status(200).json({students});
     } else {
-        res.status(404).json({message: 'students not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
 
@@ -73,7 +103,13 @@ export const countByNames = (req, res) => {
     if (count > 0) {
         res.status(200).json({count});
     } else {
-        res.status(404).json({message: 'students not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
 
@@ -85,6 +121,12 @@ export const findByMinScore = (req, res) => {
     if (students.length > 0) {
         res.status(200).json({students});
     } else {
-        res.status(404).json({message: 'students not found'});
+        res.status(404).json({
+            "timestamp": new Date().toISOString(),
+            "status": 404,
+            "error": "Not Found",
+            "message": "student not found",
+            "path": `${req.path}`
+        });
     }
 }
