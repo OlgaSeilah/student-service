@@ -6,7 +6,7 @@ export const addStudent = (req, res) => {
         res.status(204).send();
     } else {
         res.status(409)
-            .write('').send();
+            .json({message: 'conflict: student with this id already exists'});
     }
 }
 
@@ -16,30 +16,75 @@ export const findStudent = (req, res) => {
         const {password, ...studentWithoutPassword} = student;
         res.status(200).json(studentWithoutPassword);
     } else {
-        res.status(404).write('not found').send();
+        res.status(404).json({message: 'student not found'});
     }
 }
 
 export const updateStudent = (req, res) => {
-    //todo update student name / password
+    const student = repo.findStudent(+req.params.id);
+    if (student) {
+        const dataForUpdate = {
+            id: +req.params.id,
+            name: req.body.name,
+            password: req.body.password,
+        }
+        const success = repo.editStudent(dataForUpdate);
+        if (success) {
+            res.status(200).json({message: 'student updated successfully'});
+        } else {
+            res.status(400).json({message: 'incorrect request'});
+        }
+    } else {
+        res.status(404).json({message: 'student not found'});
+    }
+
 }
 
 export const deleteStudent = (req, res) => {
-    //todo delete student
+    const success = repo.deleteStudent(+req.params.id);
+    if (success) {
+        res.status(204).send();
+    } else {
+        res.status(404).json({message: 'student not found'});
+    }
 }
 
 export const addScore = (req, res) => {
-    //todo add score to student
+    const success = repo.addSubjectAndScore(+req.params.id, req.body)
+    if (success) {
+        res.status(204).send();
+    } else {
+        res.status(404).json({message: 'student not found'});
+    }
 }
 
 export const findByName = (req, res) => {
-    //todo find student by name
+    const students = repo.findStudentsByName(req.params.name);
+    if (students.length > 0) {
+
+        res.status(200).json({students});
+    } else {
+        res.status(404).json({message: 'students not found'});
+    }
 }
 
 export const countByNames = (req, res) => {
-    //todo count students by names
+    const count = repo.countByNames(req.query.names); // req.query.names - array of names
+    if (count > 0) {
+        res.status(200).json({count});
+    } else {
+        res.status(404).json({message: 'students not found'});
+    }
 }
 
 export const findByMinScore = (req, res) => {
+    const examName = req.params.examName;
+    const minScore = req.params.minScore;
 
+    const students = repo.findByMinScoreForExam(examName, minScore);
+    if (students.length > 0) {
+        res.status(200).json({students});
+    } else {
+        res.status(404).json({message: 'students not found'});
+    }
 }
