@@ -1,7 +1,7 @@
 import * as repo from "../repository/studentRepository.js";
 
-export const addStudent = (req, res) => {
-    const success = repo.addStudent(req.body);
+export const addStudent = async (req, res) => {
+    const success = await repo.addStudent(req.body);
     if (success) {
         res.status(204).send();
     } else {
@@ -10,8 +10,8 @@ export const addStudent = (req, res) => {
     }
 }
 
-export const findStudent = (req, res) => {
-    const student = repo.findStudent(+req.params.id);
+export const findStudent = async (req, res) => {
+    const student = await repo.findStudent(+req.params.id);
     if (student) {
         const {password, ...studentWithoutPassword} = student;
         res.status(200).json(studentWithoutPassword);
@@ -26,17 +26,13 @@ export const findStudent = (req, res) => {
     }
 }
 
-export const updateStudent = (req, res) => {
-    const student = repo.findStudent(+req.params.id);
+export const updateStudent = async (req, res) => {
+    const student = await repo.findStudent(+req.params.id);
     if (student) {
-        const dataForUpdate = {
-            id: +req.params.id,
-            name: req.body.name,
-            password: req.body.password,
-        }
-        const changedStudent = repo.editStudent(dataForUpdate);
+        const changedStudent = await repo.editStudent(+req.params.id, req.body);
         if (changedStudent) {
-            res.status(200).json({changedStudent});
+            const {password, ...studentWithoutPassword} = changedStudent;
+            res.status(200).json({studentWithoutPassword});
         } else {
             res.status(400).json({message: 'incorrect request'});
         }
@@ -52,8 +48,8 @@ export const updateStudent = (req, res) => {
 
 }
 
-export const deleteStudent = (req, res) => {
-    const success = repo.deleteStudent(+req.params.id);
+export const deleteStudent = async (req, res) => {
+    const success = await repo.deleteStudent(+req.params.id);
     if (success) {
         res.status(204).send();
     } else {
@@ -67,8 +63,8 @@ export const deleteStudent = (req, res) => {
     }
 }
 
-export const addScore = (req, res) => {
-    const success = repo.addSubjectAndScore(+req.params.id, req.body)
+export const addScore = async (req, res) => {
+    const success = await repo.addSubjectAndScore(+req.params.id, req.body)
     if (success) {
         res.status(204).send();
     } else {
@@ -82,10 +78,9 @@ export const addScore = (req, res) => {
     }
 }
 
-export const findByName = (req, res) => {
-    const students = repo.findStudentsByName(req.params.name);
+export const findByName = async (req, res) => {
+    const students = await repo.findStudentsByName(req.params.name);
     if (students.length > 0) {
-
         res.status(200).json({students});
     } else {
         res.status(404).json({
@@ -98,8 +93,13 @@ export const findByName = (req, res) => {
     }
 }
 
-export const countByNames = (req, res) => {
-    const count = repo.countByNames(req.query.names); // req.query.names - array of names
+export const countByNames = async (req, res) => {
+    let params = req.query.names;
+    if (typeof params === 'string') {
+        params = Array.of(params);
+    }
+    const count = await repo.countByNames(params);
+
     if (count > 0) {
         res.status(200).json({count});
     } else {
@@ -113,11 +113,11 @@ export const countByNames = (req, res) => {
     }
 }
 
-export const findByMinScore = (req, res) => {
+export const findByMinScore = async (req, res) => {
     const examName = req.params.examName;
-    const minScore = req.params.minScore;
+    const minScore = +req.params.minScore;
 
-    const students = repo.findByMinScoreForExam(examName, minScore);
+    const students = await repo.findByMinScoreForExam(examName, minScore);
     if (students.length > 0) {
         res.status(200).json({students});
     } else {

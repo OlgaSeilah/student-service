@@ -1,84 +1,55 @@
-import {Student} from "../model/student.js";
+let collection;
 
-const students = new Map();
+export const initDb = (db) => {
+    collection = db.collection('colleague');
+}
 
-export const addStudent = ({id, name, password}) => {
-    if (students.has(id)) {
+export const addStudent = async ({id, name, password}) => {
+    const isStudentExists = await findStudent(id);
+    if (isStudentExists) {
         return false;
     }
-    students.set(id, new Student(id, name, password));
+    await collection.insertOne({_id: id, name, password, scores: {}});
     return true;
 }
 
-export const findStudent = (id) => {
-    return students.get(id)
+export const findStudent = async (id) => {
+    return await collection.findOne({_id: id});
 };
 
 
-export const editStudent = ({id, name, password}) => {
-    const currentStudent = findStudent(id);
-    if (currentStudent) {
-        if (name) {
-            currentStudent.name = name;
-        }
-        if (password) {
-            currentStudent.password = password;
-        }
-        return currentStudent;
-    } else {
-        return null;
-    }
+export const editStudent = async (id, data) => {
+    return await collection.findOneAndUpdate(
+        {_id: id},
+        {$set: data},
+        {returnDocument: 'after'}
+    )
 }
 
-export const deleteStudent = (id) => {
-    const currentStudent = findStudent(id);
+export const deleteStudent = async (id) => {
+    const currentStudent = await findStudent(id);
     if (currentStudent) {
-        students.delete(id);
+        collection.deleteOne({_id: id});
         return true;
-    } else {
-        return false;
     }
+    return false;
 };
 
-export const addSubjectAndScore = (id, {examName, score}) => {
-    const currentStudent = findStudent(id);
-    if (currentStudent) {
-        currentStudent.scores[examName] = score;
-        return true;
-    } else {
-        return false;
-    }
+export const addSubjectAndScore = async (id, data) => {
+    return await collection.findOneAndUpdate(
+        {_id: id},
+        {$set: {[`scores.${data.examName}`]: data.score}},
+    )
 }
 
-export const findStudentsByName = (name) => {
-    const studentsArray = [];
-    for (const student of students.values()) {
-        if (student.name === name) {
-            const {password, ...studentWithoutPassword} = student;
-            studentsArray.push(studentWithoutPassword);
-        }
-    }
-    return studentsArray;
+export const findStudentsByName = async (name) => {
+    return await collection.find({name: name}).toArray();
 }
 
-export const countByNames = (names) => {
-    const studentsArray=[];
-    for (const name of names) {
-        const studentsByName = findStudentsByName(name);
-        studentsArray.push(...studentsByName);
-    }
-    return studentsArray.length;
+export const countByNames = async (names) => {
+    return await collection.countDocuments({name: {$in: names}});
 }
 
-export const findByMinScoreForExam = (examName, minScore) => {
-    const studentsArray = [];
-
-    for (const student of students.values()) {
-        const score = student.scores[examName];
-        if (score >= minScore) {
-            const {password, ...studentWithoutPassword} = student;
-            studentsArray.push(studentWithoutPassword);
-        }
-    }
-    return studentsArray;
+export const findByMinScoreForExam = async (examName, minScore) => {
+    return await collection.find({[`scores.${examName}`]: {$gte: minScore}}).toArray();
 }
