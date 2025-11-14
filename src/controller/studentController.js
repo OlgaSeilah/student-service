@@ -1,4 +1,5 @@
 import * as repo from "../repository/studentRepository.js";
+import {ErrorBodyNotFound} from "../errorBodyNotFound.js";
 
 export const addStudent = async (req, res) => {
     const success = await repo.addStudent(req.body);
@@ -16,13 +17,9 @@ export const findStudent = async (req, res) => {
         const {password, ...studentWithoutPassword} = student;
         res.status(200).json(studentWithoutPassword);
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+
+        ));
     }
 }
 
@@ -37,13 +34,10 @@ export const updateStudent = async (req, res) => {
             res.status(400).json({message: 'incorrect request'});
         }
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 
 }
@@ -53,13 +47,10 @@ export const deleteStudent = async (req, res) => {
     if (success) {
         res.status(204).send();
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 }
 
@@ -68,13 +59,10 @@ export const addScore = async (req, res) => {
     if (success) {
         res.status(204).send();
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 }
 
@@ -83,13 +71,10 @@ export const findByName = async (req, res) => {
     if (students.length > 0) {
         res.status(200).json({students});
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 }
 
@@ -103,13 +88,10 @@ export const countByNames = async (req, res) => {
     if (count > 0) {
         res.status(200).json({count});
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 }
 
@@ -121,12 +103,9 @@ export const findByMinScore = async (req, res) => {
     if (students.length > 0) {
         res.status(200).json({students});
     } else {
-        res.status(404).json({
-            "timestamp": new Date().toISOString(),
-            "status": 404,
-            "error": "Not Found",
-            "message": "student not found",
-            "path": `${req.path}`
-        });
+        res.status(404).json(new ErrorBodyNotFound(
+            new Date().toISOString(),
+            req.path
+        ));
     }
 }
