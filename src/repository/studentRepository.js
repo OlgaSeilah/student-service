@@ -43,11 +43,19 @@ export const addSubjectAndScore = async (id, data) => {
 }
 
 export const findStudentsByName = async (name) => {
-    return await collection.find({name: name}).toArray();
+    return await collection.find({
+        name: {
+            $regex: name,
+            $options: 'i'
+        }
+    }).toArray();
 }
 
 export const countByNames = async (names) => {
-    return await collection.countDocuments({name: {$in: names}});
+    return await collection.countDocuments(
+        { name: { $in: names } },
+        { collation: { locale: "en", strength: 2 } }
+    );
 }
 
 export const findByMinScoreForExam = async (examName, minScore) => {
