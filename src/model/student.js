@@ -10,6 +10,8 @@ const studentSchema = new mongoose.Schema({
             of: Number,
             default: {}
         }
+    }, {
+        versionKey: false
     }
 )
 
