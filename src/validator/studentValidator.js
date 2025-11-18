@@ -1,0 +1,18 @@
+/** here joi validation validates data for student**/
+import Joi from 'joi';
+
+export const studentBaseSchema = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().required(),
+    password: Joi.string().required(),
+})
+
+export const updateStudentSchema = Joi.object({
+    name: Joi.string().required(),
+    password: Joi.string().required()
+})
+
+export const scoreSchema = Joi.object({
+    examName: Joi.string().required(),
+    score: Joi.number().min(0).max(100).required()
+})
