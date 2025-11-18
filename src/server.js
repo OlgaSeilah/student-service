@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import studentRouter from './routes/studentRoutes.js';
 
 dotenv.config();
-
 const port = process.env.PORT || 3000;
 const app = express();
 

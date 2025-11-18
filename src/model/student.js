@@ -11,7 +11,21 @@ const studentSchema = new mongoose.Schema({
             default: {}
         }
     }, {
-        versionKey: false
+    versionKey: false,
+    toJSON: {
+        transform: function (doc, ret) {
+            const responseBody = {};
+            responseBody.id = ret._id;
+            for (const key in ret) {
+                if (key !== '_id') {
+                    responseBody[key] = ret[key];
+                }
+            }
+            delete ret._id;
+            return responseBody;
+        }
+
+    }
     }
 )
 

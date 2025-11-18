@@ -33,17 +33,21 @@ export const updateStudent = async (id, data) => {
 }
 
 export const addScore = async (id, exam, score) => {
-    // TODO
+    const student = await repo.findStudentById(id);
+    if (student) {
+        await repo.updateStudentScores(id, exam, score);
+    }
+    return student;
 }
 
 export const findByName = async (name) => {
-    // TODO
+    return repo.findStudentByName(name);
 }
 
 export const countByNames = async (names) => {
-    // TODO
+    return repo.countStudentsByName(names)
 }
 
 export const findByMinScore = async (exam, minScore) => {
-    // TODO
+    return repo.findStudentsByMinScore(exam, minScore)
 }
