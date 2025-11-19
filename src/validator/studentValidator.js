@@ -8,8 +8,8 @@ export const studentBaseSchema = Joi.object({
 })
 
 export const updateStudentSchema = Joi.object({
-    name: Joi.string().required(),
-    password: Joi.string().required()
+    name: Joi.string(),
+    password: Joi.string()
 })
 
 export const scoreSchema = Joi.object({

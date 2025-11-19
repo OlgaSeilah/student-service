@@ -1,63 +1,37 @@
-let collection;
+import Student from "../model/student.js";
 
-export const initDb = (db) => {
-    collection = db.collection('colleague');
+/** looks straight to a database **/
+
+
+export function createStudent(student) {
+    return Student.create(student);
 }
 
-export const addStudent = async ({id, name, password}) => {
-    const isStudentExists = await findStudent(id);
-    if (isStudentExists) {
-        return false;
-    }
-    await collection.insertOne({_id: id, name, password, scores: {}});
-    return true;
+export function findById(id) {
+    return Student.findById(id);
 }
 
-export const findStudent = async (id) => {
-    return await collection.findOne({_id: id});
-};
-
-
-export const editStudent = async (id, data) => {
-    return await collection.findOneAndUpdate(
-        {_id: id},
-        {$set: data},
-        {returnDocument: 'after'}
-    )
+export function deleteStudentById(id) {
+    return Student.findByIdAndDelete(id);
 }
 
-export const deleteStudent = async (id) => {
-    const currentStudent = await findStudent(id);
-    if (currentStudent) {
-        collection.deleteOne({_id: id});
-        return true;
-    }
-    return false;
-};
-
-export const addSubjectAndScore = async (id, data) => {
-    return await collection.findOneAndUpdate(
-        {_id: id},
-        {$set: {[`scores.${data.examName}`]: data.score}},
-    )
+export function updateStudent(id, data) {
+    return Student.findByIdAndUpdate(id, data, {new: true});
 }
 
-export const findStudentsByName = async (name) => {
-    return await collection.find({
-        name: {
-            $regex: name,
-            $options: 'i'
-        }
-    }).toArray();
+export function updateStudentScores(id, exam, score) {
+    return Student.findByIdAndUpdate(id, {[`scores.${exam}`]: score});
 }
 
-export const countByNames = async (names) => {
-    return await collection.countDocuments(
-        { name: { $in: names } },
-        { collation: { locale: "en", strength: 2 } }
-    );
+export function findStudentByName(name) {
+    return Student.find({name: new RegExp(`^${name}$`, `i`)})
 }
 
-export const findByMinScoreForExam = async (examName, minScore) => {
-    return await collection.find({[`scores.${examName}`]: {$gte: minScore}}).toArray();
+export function countStudentsByName(names) {
+    const regexConditions = names.map(name => ({name: new RegExp(`^${name}$`, `i`)}));
+    return Student.countDocuments({$or: regexConditions});
+}
+
+export function findStudentsByMinScore(exam, minScore) {
+    return Student.find({[`scores.${exam}`]: {$gte: minScore}});
 }
